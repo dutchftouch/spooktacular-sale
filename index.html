@@ -53,9 +53,8 @@ table{width:100%;border-collapse:collapse;font-size:.82rem}th,td{padding:6px;bor
 <div id="ad"></div></div>
 </div>
 <script>
-// --- ส่วนตั้งค่าที่แก้ไขแล้ว ---
-const ADMIN_MESSENGER = "https://m.me/ich.dukhen.1"; // ไอดี Inbox
-const SECRET_CODE = "SPOOKYSALE2026"; // รหัสลับสำหรับแจกในกลุ่ม
+const ADMIN_MESSENGER = "https://m.me/ich.dukhen.1"; 
+const SECRET_CODE = "SPOOKYSALE2026"; 
 const POOL = [
   ["ส่วนลด 10%", 10], 
   ["ส่วนลด 20%", 3], 
@@ -63,23 +62,23 @@ const POOL = [
   ["ส่วนลด 30 บาท", 5],
   ["ขอไข่ในเกม 50 ฟอง", 5]
 ];
-// -----------------------------
 
-const K = "spooky_v9"; // อัปเดต Key ใหม่เพื่อรองรับการแสดงผลล่าสุด
+const K = "spooky_v11"; 
 let S;
 try{S=JSON.parse(localStorage.getItem(K))}catch(e){}
 if(!S)S={regs:[]};
 const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
 const $=i=>document.getElementById(i);
-const norm=u=>u.toLowerCase().trim().replace(/^https?:\/\/(www\.|m\.)?facebook\.com\//,"").replace(/[\/?#].*$/,"").replace(/^@/,"");
+
+const norm=u=>u.toLowerCase().trim().replace(/^https?:\/\/(www\.|m\.|web\.)?facebook\.com\//,"").replace(/[\/?&#].*$/,"").replace(/^@/,"");
+
 const live=()=>S.regs.filter(r=>!r.dq);
 function left(){return POOL.map(([n,q])=>[n,q-live().filter(r=>r.prize===n).length])}
 
-// ฟังก์ชันปรับปรุงการแสดงสถานะคงเหลือ
 function stock(){
   $("stock").innerHTML = left().map(([n,q]) => {
     const statusText = q > 0 ? "สถานะ : ยังคงเหลืออยู่" : "สถานะ : หมดแล้ว";
-    const statusColor = q > 0 ? "#00ffaa" : "#ff3da8"; // เขียว ถ้าเหลือ / แดงชมพู ถ้าหมด
+    const statusColor = q > 0 ? "#00ffaa" : "#ff3da8"; 
     return `<div><b>${q}</b><small>${n}</small><br><span style="color:${statusColor};font-size:0.75rem;">${statusText}</span></div>`;
   }).join("");
 }
@@ -88,6 +87,11 @@ function msg(t,ok){const m=$("m");m.className="msg "+(ok?"ok":"er");m.textConten
 function genRef(){return "SPK-" + Math.random().toString(36).substring(2,6).toUpperCase() + Math.floor(Math.random()*10);}
 
 $("go").onclick=()=>{
+ // ระบบตรวจสอบว่าเครื่องนี้เคยลงทะเบียนสำเร็จไปแล้วหรือยัง
+ if(localStorage.getItem(K+"_locked")) {
+     return msg("อุปกรณ์/เบราว์เซอร์นี้ทำการลงทะเบียนรับสิทธิ์ไปแล้ว ไม่สามารถลงทะเบียนซ้ำได้",0);
+ }
+
  const sc=$("sc").value.trim().toUpperCase();
  const fb=$("fb").value.trim();
  const fid=norm($("fu").value);
@@ -108,6 +112,9 @@ $("go").onclick=()=>{
  const at = Date.now();
  S.regs.push({fb,fid,ch,refCode,prize,at,dq:false});
  save();stock();msg("ลงทะเบียนสำเร็จ! โปรดเซฟรหัสไว้เป็นหลักฐาน",1);
+ 
+ // สั่งล็อกเครื่องทันทีเมื่อลงทะเบียนสำเร็จ
+ localStorage.setItem(K+"_locked", "true");
  
  const ex=new Date(at+20*864e5).toLocaleDateString("th-TH",{dateStyle:"long"});
  $("tk").innerHTML=`<div class="tk">🎟️<div>${fb} (${ch})</div><h2>${prize}</h2>
@@ -131,9 +138,18 @@ function admin(){
  <button class="s" style="margin-top:12px" onclick="rs()">ล้างข้อมูล (เริ่มใหม่)</button></div>`}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 window.dq=i=>{S.regs[i].dq=true;save();stock();admin()};
-window.rs=()=>{if(confirm("แน่ใจหรือไม่ว่าจะลบข้อมูลผู้เล่นทั้งหมด?")) { S.regs=[];save();stock();admin(); }};
 
-// รหัสผ่านคือ admindeal010722*9430* 
+// ฟังก์ชันล้างข้อมูล (ปลดล็อกเครื่องให้แอดมินทดสอบใหม่ได้)
+window.rs=()=>{
+  if(confirm("แน่ใจหรือไม่ว่าจะลบข้อมูลผู้เล่นทั้งหมด?")) { 
+    S.regs=[]; 
+    save(); 
+    localStorage.removeItem(K+"_locked"); 
+    stock(); 
+    admin(); 
+  }
+};
+
 $("lg").onclick=()=>{if(btoa($("pw").value)==="YWRtaW5kZWFsMDEwNzIyKjk0MzAq")admin();else $("ad").innerHTML='<div class="msg er">รหัสไม่ถูกต้อง</div>'};
 
 $("t1").onclick=()=>{$("v1").style.display="";$("v2").style.display="none";$("t1").className="on";$("t2").className=""};
