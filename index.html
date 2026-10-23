@@ -54,7 +54,7 @@ table{width:100%;border-collapse:collapse;font-size:.82rem}th,td{padding:6px;bor
 </div>
 <script>
 // --- ส่วนตั้งค่าที่แก้ไขแล้ว ---
-const ADMIN_MESSENGER = "https://m.me/ich.dukhen.1"; // อัปเดตไอดี Inbox ตามที่กำหนด
+const ADMIN_MESSENGER = "https://m.me/ich.dukhen.1"; // ไอดี Inbox
 const SECRET_CODE = "SPOOKYSALE2026"; // รหัสลับสำหรับแจกในกลุ่ม
 const POOL = [
   ["ส่วนลด 10%", 10], 
@@ -65,7 +65,7 @@ const POOL = [
 ];
 // -----------------------------
 
-const K = "spooky_v8"; 
+const K = "spooky_v9"; // อัปเดต Key ใหม่เพื่อรองรับการแสดงผลล่าสุด
 let S;
 try{S=JSON.parse(localStorage.getItem(K))}catch(e){}
 if(!S)S={regs:[]};
@@ -74,7 +74,16 @@ const $=i=>document.getElementById(i);
 const norm=u=>u.toLowerCase().trim().replace(/^https?:\/\/(www\.|m\.)?facebook\.com\//,"").replace(/[\/?#].*$/,"").replace(/^@/,"");
 const live=()=>S.regs.filter(r=>!r.dq);
 function left(){return POOL.map(([n,q])=>[n,q-live().filter(r=>r.prize===n).length])}
-function stock(){$("stock").innerHTML=left().map(([n,q])=>`<div><b>${q}</b><small>${n}<br>เหลือ</small></div>`).join("")}
+
+// ฟังก์ชันปรับปรุงการแสดงสถานะคงเหลือ
+function stock(){
+  $("stock").innerHTML = left().map(([n,q]) => {
+    const statusText = q > 0 ? "สถานะ : ยังคงเหลืออยู่" : "สถานะ : หมดแล้ว";
+    const statusColor = q > 0 ? "#00ffaa" : "#ff3da8"; // เขียว ถ้าเหลือ / แดงชมพู ถ้าหมด
+    return `<div><b>${q}</b><small>${n}</small><br><span style="color:${statusColor};font-size:0.75rem;">${statusText}</span></div>`;
+  }).join("");
+}
+
 function msg(t,ok){const m=$("m");m.className="msg "+(ok?"ok":"er");m.textContent=t}
 function genRef(){return "SPK-" + Math.random().toString(36).substring(2,6).toUpperCase() + Math.floor(Math.random()*10);}
 
@@ -87,7 +96,6 @@ $("go").onclick=()=>{
  if(!sc||!fb||!fid||!ch) return msg("กรุณากรอกข้อมูลให้ครบถ้วน",0);
  if(sc !== SECRET_CODE.toUpperCase()) return msg("รหัสลับกลุ่มไม่ถูกต้อง กรุณาตรวจสอบโพสต์ในกลุ่ม",0);
  
- // บังคับเช็คซ้ำทั้งชื่อ ลิงก์ และตัวละคร หากเจอว่าใช้อันใดอันหนึ่งซ้ำ จะถือว่าลงทะเบียนแล้ว
  if(S.regs.some(r=>r.fid===fid||r.ch.toLowerCase()===ch.toLowerCase()||r.fb.toLowerCase()===fb.toLowerCase())) {
      return msg("ชื่อ Facebook, ลิงก์โปรไฟล์ หรือตัวละครนี้ ลงทะเบียนรับสิทธิ์ไปแล้ว",0);
  }
@@ -125,7 +133,7 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 window.dq=i=>{S.regs[i].dq=true;save();stock();admin()};
 window.rs=()=>{if(confirm("แน่ใจหรือไม่ว่าจะลบข้อมูลผู้เล่นทั้งหมด?")) { S.regs=[];save();stock();admin(); }};
 
-// รหัสผ่านคือ admindeal010722*9430* แปลงเป็น Base64
+// รหัสผ่านคือ admindeal010722*9430* 
 $("lg").onclick=()=>{if(btoa($("pw").value)==="YWRtaW5kZWFsMDEwNzIyKjk0MzAq")admin();else $("ad").innerHTML='<div class="msg er">รหัสไม่ถูกต้อง</div>'};
 
 $("t1").onclick=()=>{$("v1").style.display="";$("v2").style.display="none";$("t1").className="on";$("t2").className=""};
