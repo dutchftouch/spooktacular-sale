@@ -26,7 +26,7 @@ ul{padding-left:20px;color:var(--mu);line-height:1.7}
 </style></head><body><div class="w">
 <div style="text-align:center;font-size:2.4rem">🎃👻🦇</div>
 <h1>Deal Spooktacular Sale</h1>
-<div class="sub">ลงทะเบียนวันฮาโลวีน ลุ้นรับบัตรส่วนลดและรางวัลอื่นๆ</div>
+<div class="sub">ลงทะเบียนวันฮาโลวีน ลุ้นรับบัตรส่วนลด</div>
 
 <div class="c"><div class="pr" id="stock"><div style="grid-column:1/-1;color:var(--mu)">กำลังซิงค์ข้อมูลกับเซิร์ฟเวอร์...</div></div><p class="sub" style="margin:10px 0 0">บัตรใช้ได้ 20 วัน นับจากวันที่ได้รับสิทธิ์</p></div>
 <div class="c">
@@ -44,8 +44,77 @@ ul{padding-left:20px;color:var(--mu);line-height:1.7}
 
 </div>
 <script>
-// --- เชื่อมต่อกับระบบฐานข้อมูล Google Sheets เรียบร้อยแล้ว ---
-const API_URL = "https://script.google.com/macros/s/AKfycbwbq6NFT7aV1AOBc6HrtVV7rAmQsjskGPXe90TwXuRO8dr21uRju8XBgusVl9nrfWI3/exec"; 
+// --- แนะนำให้เปลี่ยน /dev ท้ายลิงก์นี้เป็น /exec ก่อนนำไปใช้งานจริง ---
+const API_URL = "https://script.google.com/macros/s/AKfycbyIx_wZOg8CCFNInFb5JGuCDD_wjmI4kvwE0-aK5aU/dev"; 
 // --------------------------------------------------------
 
-const ADMIN_MESSENGER = "
+const ADMIN_MESSENGER = "https://m.me/ich.dukhen.1"; 
+const POOL_ORDER = [["ส่วนลด 10%", 10], ["ส่วนลด 20%", 3], ["ส่วนลด 20 บาท", 5], ["ส่วนลด 30 บาท", 5], ["ขอไข่ในเกม 50 ฟอง", 5]];
+const K = "spooky_live"; 
+const $=i=>document.getElementById(i);
+const norm=u=>u.toLowerCase().trim().replace(/^https?:\/\/(www\.|m\.|web\.)?facebook\.com\//,"").replace(/[\/?&#].*$/,"").replace(/^@/,"");
+
+function msg(t,ok){const m=$("m");m.className="msg "+(ok?"ok":"er");m.style.display="block";m.textContent=t}
+
+function renderStock(stockData) {
+  $("stock").innerHTML = POOL_ORDER.map(([n, total]) => {
+    const q = stockData[n] !== undefined ? stockData[n] : total;
+    const statusText = q > 0 ? "สถานะ : ยังคงเหลืออยู่" : "สถานะ : หมดแล้ว";
+    const statusColor = q > 0 ? "#00ffaa" : "#ff3da8"; 
+    return `<div><b>${q}</b><small>${n}</small><br><span style="color:${statusColor};font-size:0.75rem;">${statusText}</span></div>`;
+  }).join("");
+}
+
+async function loadStock() {
+   try {
+     const res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "stock" }) }).then(r=>r.json());
+     if(res.success) renderStock(res.stock);
+   } catch(e) { $("stock").innerHTML = "<div style='grid-column:1/-1;color:var(--pk)'>เชื่อมต่อฐานข้อมูลล้มเหลว ตรวจสอบ API_URL</div>"; }
+}
+
+if(API_URL.includes("script.google.com")) loadStock();
+else $("stock").innerHTML = "<div style='grid-column:1/-1;color:var(--pk)'>กรุณาใส่ API_URL จาก Google Sheets ในโค้ดก่อน</div>";
+
+$("go").onclick=async ()=>{
+ // ระบบดักเครื่อง (เปิดการทำงานพร้อมใช้งานจริง)
+ if(localStorage.getItem(K+"_locked")) {
+    return msg("อุปกรณ์/เบราว์เซอร์นี้ทำการลงทะเบียนรับสิทธิ์ไปแล้ว ไม่สามารถลงทะเบียนซ้ำได้",0);
+ }
+
+ const sc=$("sc").value.trim().toUpperCase();
+ const fb=$("fb").value.trim();
+ const fid=norm($("fu").value);
+ const ch=$("ch").value.trim();
+ 
+ if(!sc||!fb||!fid||!ch) return msg("กรุณากรอกข้อมูลให้ครบถ้วน",0);
+ 
+ $("go").disabled = true;
+ $("go").textContent = "กำลังเชื่อมต่อกับระบบส่วนกลาง...";
+ $("m").style.display = "none";
+ 
+ try {
+   const res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "register", sc, fb, fid, ch }) }).then(r=>r.json());
+   
+   if(res.error) throw new Error(res.error);
+   
+   // ล็อกเครื่องเพื่อป้องกันการสุ่มซ้ำ
+   localStorage.setItem(K+"_locked", "true"); 
+   
+   loadStock(); // รีเฟรชยอดคงเหลือล่าสุดให้หน้าเว็บ
+   
+   const ex=new Date(Date.now()+20*864e5).toLocaleDateString("th-TH",{dateStyle:"long"});
+   msg("ลงทะเบียนสำเร็จ! โปรดเซฟรหัสไว้เป็นหลักฐาน",1);
+   $("tk").innerHTML=`<div class="tk">🎟️<div>${fb} (${ch})</div><h2>${res.prize}</h2>
+   <div>รหัสอ้างอิงของคุณ:</div><div class="ref-code">${res.refCode}</div>
+   <div class="sub">หมดอายุ ${ex}</div>
+   <a href="${ADMIN_MESSENGER}" target="_blank" class="btn-link btn-messenger">💬 ส่งรหัสนี้เข้า Inbox แอดมิน</a>
+   </div>`;
+   $("go").style.display="none"; 
+   
+ } catch(e) {
+   msg(e.message, 0);
+   $("go").disabled = false;
+   $("go").textContent = "🎲 ลงทะเบียนและสุ่มรับบัตร";
+ }
+};
+</script></body></html>
