@@ -18,26 +18,20 @@ input{width:100%;padding:11px;border-radius:10px;border:1px solid #3a2570;backgr
 button, .btn-link {cursor:pointer;border:0;border-radius:12px;padding:12px 18px;font:inherit;font-weight:700;color:#fff;background:linear-gradient(90deg,var(--pk),var(--pu),var(--bl));margin-top:14px;width:100%; display:block; text-align:center; text-decoration:none;}
 button:disabled {opacity:0.6;cursor:not-allowed;}
 .btn-messenger {background:linear-gradient(90deg,#00b2ff,#006aff); margin-top:8px;}
-button.s{background:#2a1a52;width:auto;margin:0;padding:6px 10px;font-size:.8rem}
 ul{padding-left:20px;color:var(--mu);line-height:1.7}
 .msg{margin-top:12px;padding:10px;border-radius:10px;display:none}.ok{background:#1c3a2a;display:block}.er{background:#4a1530;display:block}
 .tk{margin-top:14px;text-align:center;padding:18px;border-radius:16px;border:2px dashed var(--pk);background:linear-gradient(135deg,#2b1560,#0b1a4a)}
 .tk h2{margin:.2em 0;font-size:1.8rem;color:var(--pk)}
 .ref-code {font-size: 1.5rem; font-family: monospace; background: #000; padding: 6px 12px; border-radius: 8px; color: #00ffaa; letter-spacing: 2px; margin: 10px 0; display: inline-block;}
-table{width:100%;border-collapse:collapse;font-size:.82rem}th,td{padding:6px;border-bottom:1px solid #2d1d57;text-align:left;white-space:nowrap;}
-.ov{overflow-x:auto}.bad{color:var(--pk)}.tabs{display:flex;gap:8px;justify-content:center;margin-bottom:14px}
-.tabs button{margin:0;width:auto;background:#2a1a52}.tabs button.on{background:linear-gradient(90deg,var(--pk),var(--pu))}
 </style></head><body><div class="w">
 <div style="text-align:center;font-size:2.4rem">🎃👻🦇</div>
 <h1>Deal Spooktacular Sale</h1>
 <div class="sub">ลงทะเบียนวันฮาโลวีน ลุ้นรับบัตรส่วนลด</div>
-<div class="tabs"><button id="t1" class="on">ร่วมกิจกรรม</button><button id="t2">แอดมิน</button></div>
 
-<div id="v1">
 <div class="c"><div class="pr" id="stock"><div style="grid-column:1/-1;color:var(--mu)">กำลังซิงค์ข้อมูลกับเซิร์ฟเวอร์...</div></div><p class="sub" style="margin:10px 0 0">บัตรใช้ได้ 20 วัน นับจากวันที่ได้รับสิทธิ์</p></div>
 <div class="c">
 <label>รหัสลับจากกลุ่ม Facebook (บังคับ)</label><input id="sc" placeholder="ดูรหัสได้จากโพสต์ในกลุ่ม">
-<label>ชื่อ Facebook</label><input id="fb" placeholder="เช่น Spookydeal Sale">
+<label>ชื่อ Facebook</label><input id="fb" placeholder="เช่น Spookysale Dealshop">
 <label>ลิงก์โปรไฟล์ Facebook (หรือ ID)</label><input id="fu" placeholder="facebook.com/username">
 <label>ชื่อตัวละคร</label><input id="ch" placeholder="ชื่อตัวละครในเกม">
 <button id="go">🎲 ลงทะเบียนและสุ่มรับบัตร</button>
@@ -47,15 +41,11 @@ table{width:100%;border-collapse:collapse;font-size:.82rem}th,td{padding:6px;bor
 <li>1 ชื่อ Facebook, 1 ลิงก์โปรไฟล์ และ 1 ชื่อตัวละคร ร่วมสนุกได้เพียง 1 ครั้งเท่านั้น</li>
 <li><b style="color:var(--pk)">สำคัญ:</b> ชื่อ Facebook ต้องตรงกับลิงก์โปรไฟล์ แอดมินจะตรวจสอบความถูกต้องก่อนมอบรางวัล หากไม่ตรงถือว่าสละสิทธิ์</li>
 <li>หลังจากได้รหัสอ้างอิง ให้กดปุ่มส่งเข้า Inbox แอดมินเพื่อยืนยันรับสิทธิ์</li></ul></div>
-</div>
 
-<div id="v2" style="display:none">
-<div class="c"><label>รหัสผ่านเข้าสู่ระบบแอดมิน</label><input id="pw" type="password"><button id="lg">เข้าสู่ระบบ</button></div>
-<div id="ad"></div></div>
 </div>
 <script>
-// --- เอา URL จาก Google Apps Script มาวางแทนข้อความข้างล่างนี้ ---
-const API_URL = "ใส่_URL_WEB_APP_ที่นี่"; 
+// --- เชื่อมต่อกับระบบฐานข้อมูล Google Sheets เรียบร้อยแล้ว ---
+const API_URL = "https://script.google.com/macros/s/AKfycbwbq6NFT7aV1AOBc6HrtVV7rAmQsjskGPXe90TwXuRO8dr21uRju8XBgusVl9nrfWI3/exec"; 
 // --------------------------------------------------------
 
 const ADMIN_MESSENGER = "https://m.me/ich.dukhen.1"; 
@@ -79,13 +69,14 @@ async function loadStock() {
    try {
      const res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "stock" }) }).then(r=>r.json());
      if(res.success) renderStock(res.stock);
-   } catch(e) { $("stock").innerHTML = "<div style='grid-column:1/-1;color:var(--pk)'>เชื่อมต่อฐานข้อมูลล้มเหลว</div>"; }
+   } catch(e) { $("stock").innerHTML = "<div style='grid-column:1/-1;color:var(--pk)'>เชื่อมต่อฐานข้อมูลล้มเหลว ตรวจสอบ API_URL</div>"; }
 }
 
 if(API_URL.includes("script.google.com")) loadStock();
-else $("stock").innerHTML = "<div style='grid-column:1/-1;color:var(--pk)'>กรุณาใส่ API_URL จาก Google Sheets ก่อน</div>";
+else $("stock").innerHTML = "<div style='grid-column:1/-1;color:var(--pk)'>กรุณาใส่ API_URL จาก Google Sheets ในโค้ดก่อน</div>";
 
 $("go").onclick=async ()=>{
+ // ระบบดักเครื่องที่เคยรับสิทธิ์ไปแล้ว
  if(localStorage.getItem(K+"_locked")) {
      return msg("อุปกรณ์/เบราว์เซอร์นี้ทำการลงทะเบียนรับสิทธิ์ไปแล้ว ไม่สามารถลงทะเบียนซ้ำได้",0);
  }
@@ -102,11 +93,14 @@ $("go").onclick=async ()=>{
  $("m").style.display = "none";
  
  try {
+   // ส่งข้อมูลไปตรวจสอบความถูกต้องและสุ่มรางวัลจาก Google Sheets
    const res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "register", sc, fb, fid, ch }) }).then(r=>r.json());
+   
    if(res.error) throw new Error(res.error);
    
-   localStorage.setItem(K+"_locked", "true"); // ล็อกเครื่องนี้
-   loadStock(); // รีเฟรชยอดคงเหลือล่าสุด
+   // ถ้าลงทะเบียนสำเร็จ จะล็อกเครื่องนี้ไว้ไม่ให้กดซ้ำ
+   localStorage.setItem(K+"_locked", "true"); 
+   loadStock(); // รีเฟรชยอดคงเหลือล่าสุดให้หน้าเว็บ
    
    const ex=new Date(Date.now()+20*864e5).toLocaleDateString("th-TH",{dateStyle:"long"});
    msg("ลงทะเบียนสำเร็จ! โปรดเซฟรหัสไว้เป็นหลักฐาน",1);
@@ -123,45 +117,4 @@ $("go").onclick=async ()=>{
    $("go").textContent = "🎲 ลงทะเบียนและสุ่มรับบัตร";
  }
 };
-
-async function loadAdmin() {
-  $("ad").innerHTML='<div class="msg ok" style="display:block">กำลังโหลดข้อมูลจาก Google Sheets...</div>';
-  try {
-    const res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "admin", pw: $("pw").value }) }).then(r=>r.json());
-    if (res.error) throw new Error(res.error);
-    const live = res.regs.filter(r=>!r.dq).length;
-    
-    $("ad").innerHTML=`<div class="c ov"><b>ผู้ลงทะเบียนทั้งหมด ${res.regs.length} | สถานะปกติ ${live}</b><br>
-    <small style="color:var(--mu)">*ระบบเปลี่ยนไปเก็บข้อมูลใน Google Sheets แล้ว แอดมินสามารถเข้าไปดูข้อมูลแบบตารางใน Google Sheets ได้เลย</small>
-    <table style="margin-top:10px"><tr><th>รหัสอ้างอิง</th><th>FB</th><th>ตัวละคร</th><th>รางวัล</th><th>สถานะ</th><th></th></tr>
-    ${res.regs.map((r,i)=>`<tr>
-     <td><b style="color:var(--pk)">${r.refCode}</b></td>
-     <td><a href="https://facebook.com/${r.fid}" target="_blank" style="color:var(--bl)">${esc(r.fb)}</a></td>
-     <td>${esc(r.ch)}</td><td>${r.prize}</td>
-     <td class="${r.dq?"bad":""}">${r.dq?"ตัดสิทธิ์":"ปกติ"}</td>
-     <td>${r.dq?"":`<button class="s" onclick="dq(${i})">ตัดสิทธิ์</button>`}</td>
-    </tr>`).join("")}</table></div>`;
-  } catch(e) {
-    $("ad").innerHTML=`<div class="msg er" style="display:block">${e.message}</div>`;
-  }
-}
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-
-window.dq=async (idx)=>{
-  if(!confirm("แน่ใจหรือไม่ที่จะตัดสิทธิ์ผู้เล่นรายนี้?")) return;
-  const btn = event.target; btn.disabled = true; btn.textContent = "...";
-  try {
-    const res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "dq", pw: $("pw").value, index: idx }) }).then(r=>r.json());
-    if(res.error) alert(res.error);
-    else loadAdmin();
-  } catch(e) { alert(e.message); btn.disabled = false; btn.textContent = "ตัดสิทธิ์"; }
-};
-
-$("lg").onclick=()=>{
-  if(btoa($("pw").value)==="YWRtaW5kZWFsMDEwNzIyKjk0MzAq") loadAdmin(); 
-  else { $("ad").innerHTML='<div class="msg er" style="display:block">รหัสไม่ถูกต้อง</div>'; }
-};
-
-$("t1").onclick=()=>{$("v1").style.display="";$("v2").style.display="none";$("t1").className="on";$("t2").className=""};
-$("t2").onclick=()=>{$("v2").style.display="";$("v1").style.display="none";$("t2").className="on";$("t1").className=""};
 </script></body></html>
