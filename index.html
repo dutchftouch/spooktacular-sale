@@ -53,12 +53,12 @@ table{width:100%;border-collapse:collapse;font-size:.82rem}th,td{padding:6px;bor
 </div>
 <script>
 // --- ส่วนตั้งค่าที่สามารถแก้ไขได้ ---
-const ADMIN_MESSENGER = "https://m.me/YOUR_FACEBOOK_ID"; // ** อย่าลืมเปลี่ยนลิงก์นี้เป็นลิงก์ Inbox ของคุณ **
-const SECRET_CODE = "SPOOKYFB"; // รหัสลับสำหรับแจกในกลุ่ม
+const ADMIN_MESSENGER = "https://m.me/YOUR_FACEBOOK_ID"; // เปลี่ยนลิงก์นี้เป็นลิงก์ Inbox ของคุณ
+const SECRET_CODE = "SPOOKYSALE2026"; // รหัสลับสำหรับแจกในกลุ่ม
 const POOL = [["ส่วนลด 10%", 10], ["ส่วนลด 20%", 3], ["ส่วนลด 20 บาท", 5], ["ส่วนลด 30 บาท", 5]];
 // -----------------------------
 
-const K = "spooky_final"; // Key บันทึกข้อมูล
+const K = "spooky_v6"; // เปลี่ยน Key ใหม่เพื่อเริ่มนับโควต้าใหม่ทั้งหมด
 let S;
 try{S=JSON.parse(localStorage.getItem(K))}catch(e){}
 if(!S)S={regs:[]};
@@ -117,7 +117,7 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 window.dq=i=>{S.regs[i].dq=true;save();stock();admin()};
 window.rs=()=>{if(confirm("แน่ใจหรือไม่ว่าจะลบข้อมูลผู้เล่นทั้งหมด?")) { S.regs=[];save();stock();admin(); }};
 
-// รหัสผ่านคือ admindeal010722*9430* (แปลงเป็น Base64 แล้ว)
+// รหัสผ่านคือ admindeal010722*9430* 
 $("lg").onclick=()=>{if(btoa($("pw").value)==="YWRtaW5kZWFsMDEwNzIyKjk0MzAq")admin();else $("ad").innerHTML='<div class="msg er">รหัสไม่ถูกต้อง</div>'};
 
 $("t1").onclick=()=>{$("v1").style.display="";$("v2").style.display="none";$("t1").className="on";$("t2").className=""};
