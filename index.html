@@ -35,24 +35,30 @@ table{width:100%;border-collapse:collapse;font-size:.82rem}th,td{padding:6px;bor
 <div id="v1">
 <div class="c"><div class="pr" id="stock"></div><p class="sub" style="margin:10px 0 0">บัตรใช้ได้ 20 วัน นับจากวันที่ได้รับสิทธิ์</p></div>
 <div class="c">
+<label>รหัสลับจากกลุ่ม Facebook (บังคับ)</label><input id="sc" placeholder="ดูรหัสได้จากโพสต์ในกลุ่ม">
 <label>ชื่อ Facebook</label><input id="fb" placeholder="เช่น สมชาย ใจดี">
 <label>ลิงก์โปรไฟล์ Facebook (หรือ ID)</label><input id="fu" placeholder="facebook.com/username">
 <label>ชื่อตัวละคร</label><input id="ch" placeholder="ชื่อตัวละครในเกม">
 <button id="go">🎲 ลงทะเบียนและสุ่มรับบัตร</button>
 <div id="m" class="msg"></div><div id="tk"></div></div>
 <div class="c"><b>กติกา</b><ul>
+<li>เฉพาะสมาชิกที่มีรหัสจากในกลุ่ม Facebook เท่านั้น</li>
 <li>1 ชื่อ Facebook และ 1 ลิงก์โปรไฟล์ ร่วมสนุกได้เพียง 1 ชื่อตัวละครเท่านั้น</li>
 <li>หลังจากได้รหัสอ้างอิง ให้กดปุ่มส่งเข้า Inbox แอดมินเพื่อยืนยันรับสิทธิ์</li></ul></div>
 </div>
 
 <div id="v2" style="display:none">
-<div class="c"><label>รหัสแอดมิน (ทดสอบ: admin1234)</label><input id="pw" type="password"><button id="lg">เข้าสู่ระบบ</button></div>
+<div class="c"><label>รหัสผ่านเข้าสู่ระบบแอดมิน</label><input id="pw" type="password"><button id="lg">เข้าสู่ระบบ</button></div>
 <div id="ad"></div></div>
 </div>
 <script>
-const ADMIN_MESSENGER = "https://m.me/YOUR_FACEBOOK_ID"; // เปลี่ยนเป็นลิงก์เพจหรือเฟซบุ๊กส่วนตัวของแอดมิน
+// --- ส่วนตั้งค่าที่สามารถแก้ไขได้ ---
+const ADMIN_MESSENGER = "https://m.me/YOUR_FACEBOOK_ID"; // ** อย่าลืมเปลี่ยนลิงก์นี้เป็นลิงก์ Inbox ของคุณ **
+const SECRET_CODE = "SPOOKYFB"; // รหัสลับสำหรับแจกในกลุ่ม
 const POOL = [["ส่วนลด 10%", 10], ["ส่วนลด 20%", 3], ["ส่วนลด 20 บาท", 5], ["ส่วนลด 30 บาท", 5]];
-const K = "spooky_v4";
+// -----------------------------
+
+const K = "spooky_final"; // Key บันทึกข้อมูล
 let S;
 try{S=JSON.parse(localStorage.getItem(K))}catch(e){}
 if(!S)S={regs:[]};
@@ -66,10 +72,14 @@ function msg(t,ok){const m=$("m");m.className="msg "+(ok?"ok":"er");m.textConten
 function genRef(){return "SPK-" + Math.random().toString(36).substring(2,6).toUpperCase() + Math.floor(Math.random()*10);}
 
 $("go").onclick=()=>{
- const fb=$("fb").value.trim(), fid=norm($("fu").value), ch=$("ch").value.trim();
- if(!fb||!fid||!ch) return msg("กรุณากรอกข้อมูลให้ครบถ้วน",0);
+ const sc=$("sc").value.trim().toUpperCase();
+ const fb=$("fb").value.trim();
+ const fid=norm($("fu").value);
+ const ch=$("ch").value.trim();
  
- // ตรวจสอบ 1 FB Name / 1 FB Link / 1 Character
+ if(!sc||!fb||!fid||!ch) return msg("กรุณากรอกข้อมูลให้ครบถ้วน",0);
+ if(sc !== SECRET_CODE.toUpperCase()) return msg("รหัสลับกลุ่มไม่ถูกต้อง กรุณาตรวจสอบโพสต์ในกลุ่ม",0);
+ 
  if(S.regs.some(r=>r.fid===fid||r.ch.toLowerCase()===ch.toLowerCase()||r.fb.toLowerCase()===fb.toLowerCase())) {
      return msg("Facebook หรือตัวละครนี้ลงทะเบียนรับสิทธิ์ไปแล้ว",0);
  }
@@ -89,7 +99,7 @@ $("go").onclick=()=>{
  <div class="sub">หมดอายุ ${ex}</div>
  <a href="${ADMIN_MESSENGER}" target="_blank" class="btn-link btn-messenger">💬 ส่งรหัสนี้เข้า Inbox แอดมิน</a>
  </div>`;
- $("go").style.display="none"; // ซ่อนปุ่มสุ่มหลังกดแล้ว
+ $("go").style.display="none"; 
 };
 
 function admin(){
@@ -106,7 +116,10 @@ function admin(){
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 window.dq=i=>{S.regs[i].dq=true;save();stock();admin()};
 window.rs=()=>{if(confirm("แน่ใจหรือไม่ว่าจะลบข้อมูลผู้เล่นทั้งหมด?")) { S.regs=[];save();stock();admin(); }};
-$("lg").onclick=()=>{if($("pw").value==="admin1234")admin();else $("ad").innerHTML='<div class="msg er">รหัสไม่ถูกต้อง</div>'};
+
+// รหัสผ่านคือ admindeal010722*9430* (แปลงเป็น Base64 แล้ว)
+$("lg").onclick=()=>{if(btoa($("pw").value)==="YWRtaW5kZWFsMDEwNzIyKjk0MzAq")admin();else $("ad").innerHTML='<div class="msg er">รหัสไม่ถูกต้อง</div>'};
+
 $("t1").onclick=()=>{$("v1").style.display="";$("v2").style.display="none";$("t1").className="on";$("t2").className=""};
 $("t2").onclick=()=>{$("v2").style.display="";$("v1").style.display="none";$("t2").className="on";$("t1").className=""};
 stock();
