@@ -26,7 +26,7 @@ ul{padding-left:20px;color:var(--mu);line-height:1.7}
 </style></head><body><div class="w">
 <div style="text-align:center;font-size:2.4rem">🎃👻🦇</div>
 <h1>Deal Spooktacular Sale</h1>
-<div class="sub">ลงทะเบียนวันฮาโลวีน ลุ้นรับบัตรส่วนลด</div>
+<div class="sub">ลงทะเบียนวันฮาโลวีน ลุ้นรับบัตรส่วนลดและรางวัลอื่นๆ</div>
 
 <div class="c"><div class="pr" id="stock"><div style="grid-column:1/-1;color:var(--mu)">กำลังซิงค์ข้อมูลกับเซิร์ฟเวอร์...</div></div><p class="sub" style="margin:10px 0 0">บัตรใช้ได้ 20 วัน นับจากวันที่ได้รับสิทธิ์</p></div>
 <div class="c">
@@ -45,12 +45,12 @@ ul{padding-left:20px;color:var(--mu);line-height:1.7}
 </div>
 <script>
 // --- เชื่อมต่อกับระบบฐานข้อมูล Google Sheets ---
-const API_URL = "https://script.google.com/macros/s/AKfycbztKiEOXvvNDONmmWYk8iG67Fe1gSP44ip5K4XPeOcHzkoZFr2iGScFGkPb_QmNtfQ/exec"; 
+const API_URL = "https://script.google.com/macros/s/AKfycbx_Q7Cnel_wHJhSFK7XbZ5DGPsT-JvVTg-BWqSHbSqiXRuLPCsGnpfpoA5a_vKN7Zc-/exec"; 
 // --------------------------------------------------------
 
 const ADMIN_MESSENGER = "https://m.me/ich.dukhen.1"; 
 const POOL_ORDER = [["ส่วนลด 10%", 10], ["ส่วนลด 20%", 3], ["ส่วนลด 20 บาท", 5], ["ส่วนลด 30 บาท", 5], ["ขอไข่ในเกม 50 ฟอง", 5]];
-const K = "spooky_live_v2"; // อัปเดต Key ระบบล็อกใหม่
+const K = "spooky_live_v3"; // อัปเดต Key เพื่อเคลียร์ค่าการล็อกเก่าออก พร้อมใช้งานจริง
 const $=i=>document.getElementById(i);
 const norm=u=>u.toLowerCase().trim().replace(/^https?:\/\/(www\.|m\.|web\.)?facebook\.com\//,"").replace(/[\/?&#].*$/,"").replace(/^@/,"");
 
@@ -76,7 +76,7 @@ if(API_URL.includes("script.google.com")) loadStock();
 else $("stock").innerHTML = "<div style='grid-column:1/-1;color:var(--pk)'>กรุณาใส่ API_URL จาก Google Sheets ในโค้ดก่อน</div>";
 
 $("go").onclick=async ()=>{
- // ระบบดักเครื่อง (เปิดการทำงานพร้อมใช้งานจริง)
+ // 1. ระบบดักเครื่อง: เช็คว่าในเครื่องนี้มีการล็อกไว้หรือไม่
  if(localStorage.getItem(K+"_locked")) {
     return msg("อุปกรณ์/เบราว์เซอร์นี้ทำการลงทะเบียนรับสิทธิ์ไปแล้ว ไม่สามารถลงทะเบียนซ้ำได้",0);
  }
@@ -97,7 +97,7 @@ $("go").onclick=async ()=>{
    
    if(res.error) throw new Error(res.error);
    
-   // ล็อกเครื่องเพื่อป้องกันการสุ่มซ้ำ
+   // 2. ระบบดักเครื่อง: บันทึกการล็อกลงเบราว์เซอร์ทันทีที่ลงทะเบียนสำเร็จ
    localStorage.setItem(K+"_locked", "true"); 
    
    loadStock(); // รีเฟรชยอดคงเหลือล่าสุดให้หน้าเว็บ
@@ -114,7 +114,7 @@ $("go").onclick=async ()=>{
  } catch(e) {
    msg(e.message, 0);
    $("go").disabled = false;
-   $("go").textContent = "🎲 ลงทะเบียนและสุ่มรับของรางวัล";
+   $("go").textContent = "🎲 ลงทะเบียนและสุ่มรับรางวัล";
  }
 };
 </script></body></html>
