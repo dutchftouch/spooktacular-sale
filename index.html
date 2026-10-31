@@ -50,9 +50,15 @@ const API_URL = "https://script.google.com/macros/s/AKfycbx_Q7Cnel_wHJhSFK7XbZ5D
 
 const ADMIN_MESSENGER = "https://m.me/ich.dukhen.1"; 
 const POOL_ORDER = [["ส่วนลด 10%", 10], ["ส่วนลด 20%", 3], ["ส่วนลด 20 บาท", 5], ["ส่วนลด 30 บาท", 5], ["ขอไข่ในเกม 50 ฟอง", 5]];
-const K = "spooky_live_v3"; 
 const $=i=>document.getElementById(i);
-const norm=u=>u.toLowerCase().trim().replace(/^https?:\/\/(www\.|m\.|web\.)?facebook\.com\//,"").replace(/[\/?&#].*$/,"").replace(/^@/,"");
+
+// ฟังก์ชันแปลงลิงก์ให้ฉลาดขึ้น รองรับทั้ง facebook.com/username, share/123, และ profile.php?id=123
+const norm = u => {
+  let s = u.toLowerCase().trim();
+  if (s.includes('profile.php?id=')) return s.split('id=')[1].split('&')[0];
+  s = s.replace(/^https?:\/\/(www\.|m\.|web\.)?facebook\.com\//,"");
+  return s.split('?')[0].replace(/\/$/, "");
+};
 
 function msg(t,ok){const m=$("m");m.className="msg "+(ok?"ok":"er");m.style.display="block";m.textContent=t}
 
@@ -76,11 +82,6 @@ if(API_URL.includes("script.google.com")) loadStock();
 else $("stock").innerHTML = "<div style='grid-column:1/-1;color:var(--pk)'>กรุณาใส่ API_URL จาก Google Sheets ในโค้ดก่อน</div>";
 
 $("go").onclick=async ()=>{
- // ปิดระบบล็อกเครื่องชั่วคราวเพื่อการทดสอบ
- // if(localStorage.getItem(K+"_locked")) {
- //    return msg("อุปกรณ์/เบราว์เซอร์นี้ทำการลงทะเบียนรับสิทธิ์ไปแล้ว ไม่สามารถลงทะเบียนซ้ำได้",0);
- // }
-
  const sc=$("sc").value.trim().toUpperCase();
  const fb=$("fb").value.trim();
  const fid=norm($("fu").value);
@@ -97,10 +98,7 @@ $("go").onclick=async ()=>{
    
    if(res.error) throw new Error(res.error);
    
-   // ปิดการบันทึกการล็อกลงเบราว์เซอร์ชั่วคราว
-   // localStorage.setItem(K+"_locked", "true"); 
-   
-   loadStock(); // รีเฟรชยอดคงเหลือล่าสุดให้หน้าเว็บ
+   loadStock(); 
    
    const ex=new Date(Date.now()+20*864e5).toLocaleDateString("th-TH",{dateStyle:"long"});
    msg("ลงทะเบียนสำเร็จ! โปรดเซฟรหัสไว้เป็นหลักฐาน",1);
